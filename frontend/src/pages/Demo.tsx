@@ -77,7 +77,7 @@ export const Demo = () => {
   return (
     <div
       ref={containerRef}
-      className="w-screen h- flex flex-col  items-center overflow-x-hidden"
+      className="w-screen h-screen flex flex-col  items-center overflow-x-hidden"
       style={{
         backgroundImage:
           "linear-gradient(45deg, #D9B8C4 0%, #A88A9C 50%, #703D57 100%)",
