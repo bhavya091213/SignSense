@@ -3,6 +3,9 @@ import tensorflow as tf
 import cv2
 import mediapipe as mp
 import os
+import sys
+import json
+import base64
 
 def load_model_and_labels(model_path, label_encoder_path):
     model = tf.keras.models.load_model(model_path)
@@ -175,12 +178,92 @@ def collect_and_predict_continuous(model, label_encoder_classes):
     cap.release()
     cv2.destroyAllWindows()
 
+def process_base64_frame(base64_frame, holistic, mp_holistic, mp_drawing):
+    # Decode base64 to image
+    img_data = base64.b64decode(base64_frame)
+    nparr = np.frombuffer(img_data, np.uint8)
+    frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    
+    image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    image.flags.writeable = False
+    results = holistic.process(image)
+    image.flags.writeable = True
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+    # Extract landmarks with updated face points
+    frame_landmarks = np.zeros((48, 3))  # 6 face + 42 hand points
+    
+    # Face landmarks (6 key points)
+    KEY_FACE_POINTS = [
+        33,  # Left eye left corner
+        133, # Right eye right corner
+        362, # Right eye left corner
+        263, # Left eye right corner
+        61,  # Mouth left corner
+        291  # Mouth right corner
+    ]
+    
+    if results.face_landmarks:
+        for idx, point_idx in enumerate(KEY_FACE_POINTS):
+            lm = results.face_landmarks.landmark[point_idx]
+            frame_landmarks[idx] = [lm.x, lm.y, lm.z]
+    
+    # Right hand landmarks
+    if results.right_hand_landmarks:
+        start_idx = 6  # After face points
+        for idx, lm in enumerate(results.right_hand_landmarks.landmark):
+            frame_landmarks[start_idx + idx] = [lm.x, lm.y, lm.z]
+    
+    # Left hand landmarks
+    if results.left_hand_landmarks:
+        start_idx = 6 + 21  # After face and right hand
+        for idx, lm in enumerate(results.left_hand_landmarks.landmark):
+            frame_landmarks[start_idx + idx] = [lm.x, lm.y, lm.z]
+
+    return frame_landmarks, results, image
+
+def predict_from_stdin(model, label_encoder_classes):
+    mp_holistic = mp.solutions.holistic
+    mp_drawing = mp.solutions.drawing_utils
+    
+    frames = []
+    with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
+        for line in sys.stdin:
+            try:
+                data = json.loads(line)
+                base64_frame = data.get('frame', '')
+                
+                frame_landmarks, results, image = process_base64_frame(base64_frame, holistic, mp_holistic, mp_drawing)
+                frames.append(frame_landmarks)
+                
+                # Keep only the last 30 frames
+                if len(frames) > 30:
+                    frames.pop(0)
+
+                # Make prediction if we have enough frames
+                if len(frames) == 30:
+                    frames_array = np.array(frames)
+                    gesture, confidence = predict_gesture(model, label_encoder_classes, frames_array)
+                    
+                    # Send the prediction result back to stdout
+                    result = {
+                        "gesture": gesture,
+                        "confidence": float(confidence)
+                    }
+                    print(json.dumps(result))
+                    sys.stdout.flush()
+
+            except Exception as e:
+                error_msg = {"error": str(e)}
+                print(json.dumps(error_msg))
+                sys.stdout.flush()
+
 def main():
-    model_path = "../ASL/gesture_model.h5"
-    label_encoder_path = "../ASL/label_encoder_classes.npy"
+    model_path = "./gesture_model.h5"
+    label_encoder_path = "./label_encoder_classes.npy"
     
     model, label_encoder_classes = load_model_and_labels(model_path, label_encoder_path)
-    collect_and_predict_continuous(model, label_encoder_classes)
+    predict_from_stdin(model, label_encoder_classes)
 
 if __name__ == "__main__":
     main()

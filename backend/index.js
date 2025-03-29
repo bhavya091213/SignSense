@@ -24,7 +24,7 @@ io.on("connection", (socket) => {
   console.log("Client connected");
   
   // Start Python process with correct path to temp.py
-  pythonProcess = spawn("python3", [
+  pythonProcess = spawn("python", [
     path.join(__dirname, "../ASL/temp.py")
   ]);
   
