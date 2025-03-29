@@ -8,22 +8,22 @@ export const DemoTwo = () => {
 
   useEffect(() => {
     const colors = ["#D9B8C4", "#A88A9C", "#703D57", "#402A2C"];
-    const tl = gsap.timeline({ repeat: -1 });
+    const tl = gsap.timeline({ repeat: -1, yoyo: true, smoothChildTiming: true });
 
     tl.to(containerRef.current, {
-      duration: 6,
+      duration: 8,
       backgroundImage: `linear-gradient(45deg, ${colors[0]} 0%, ${colors[1]} 50%, ${colors[2]} 100%)`,
-      ease: "power1.inOut",
+      ease: "sine.inOut",
     })
     .to(containerRef.current, {
-      duration: 6,
+      duration: 8,
       backgroundImage: `linear-gradient(45deg, ${colors[1]} 0%, ${colors[2]} 50%, ${colors[3]} 100%)`,
-      ease: "power1.inOut",
+      ease: "sine.inOut",
     })
     .to(containerRef.current, {
-      duration: 6,
+      duration: 8,
       backgroundImage: `linear-gradient(45deg, ${colors[2]} 0%, ${colors[3]} 50%, ${colors[0]} 100%)`,
-      ease: "power1.inOut",
+      ease: "sine.inOut",
     });
   }, []);
 
