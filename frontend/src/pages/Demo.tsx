@@ -8,13 +8,17 @@ export const Demo = () => {
       <div className="grid grid-cols-2 grid-rows-1 w-[90%] h-[95%] space-x-5">
         <div className="bg-[#1a1a1a] flex flex-col items-center rounded-2xl">
           <h2 className="text-white text-6xl font-extrabold p-10">webcam</h2>
-          {isLive && <Webcam />}
+          {isLive && <Webcam style={{ borderRadius: "20px" }} />}
           {/* Webcam component will go here */}
         </div>
 
-        <div className="flex flex-col justify-center items-center space-y-10 bg-[#1a1a1a] rounded-2xl">
+        <div className="flex flex-col  items-center space-y-10 bg-[#1a1a1a] rounded-2xl">
+          <h2 className="text-white text-6xl font-extrabold p-10">
+            options/output
+          </h2>
           <div className="flex flex-col items-center bg-orange-200 p-10 rounded-xl w-[90%]">
             <h2 className="font-semibold">English Transcription</h2>
+
             {/* Transcription content will go here */}
           </div>
           <div className="flex flex-col items-center bg-orange-200 p-10 rounded-xl w-[90%]">

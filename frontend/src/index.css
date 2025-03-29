@@ -1,6 +1,27 @@
 @import "tailwindcss";
 
 
+@theme {
+  --color-primary: #D9B8C4; /* Light Cyan */
+  --color-secondary: #A88A9C; /* Light Blue */
+  --color-tertiary: #703D57; /* Cadet Gray */
+  --color-quaternary: #402A2C; /* Payne's Gray */
+  --color-quinary: #241715; /* Gunmetal */
+  --color-darkest: #13181A;  /* Dark */
+  --color-darkerQuinary: #1A110F; /*Darker Quinary*/
+
+  --font-display: "Satoshi", "sans-serif";
+
+  --breakpoint-3xl: 120rem;
+
+  --ease-fluid: cubic-bezier(0.3, 0, 0, 1);
+  --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
+
+  --breakpoint-xs: 20rem;
+  --breakpoint-2xl: 100rem;
+  --breakpoint-3xl: 120rem;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
 
