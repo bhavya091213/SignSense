@@ -16,6 +16,7 @@ export const Demo = () => {
     const tl = gsap.timeline({
       repeat: -1,
       yoyo: true,
+      smoothChildTiming: true,
     });
 
     tl.to(containerRef.current, {
@@ -50,8 +51,8 @@ export const Demo = () => {
   const captureFrameAndUpload = useCallback(() => {
     if (!isLive || !socketRef.current) return;
 
-    const imageSrc = ``;
-    webcamRef.current &&
+    const imageSrc =
+      webcamRef.current &&
       (webcamRef.current as unknown as Webcam).getScreenshot();
     if (!imageSrc) return;
 
@@ -77,27 +78,27 @@ export const Demo = () => {
   return (
     <div
       ref={containerRef}
-      className="w-screen h-screen flex flex-col  items-center overflow-x-hidden"
+      className="w-screen h-screen flex flex-col justify-center items-center transition-all duration-500 ease-in-out"
       style={{
         backgroundImage:
           "linear-gradient(45deg, #D9B8C4 0%, #A88A9C 50%, #703D57 100%)",
         backgroundSize: "200% 200%",
       }}
     >
-      <div className="grid md:grid-cols-2 xs:grid-cols-1 md:grid-rows-1 xs:grid-rows-2 w-[90%] h-fit py-20 md:space-x-5">
-        <div className="bg-quaternary/40 backdrop-blur-md flex flex-col items-center rounded-2xl h-fit">
-          <h2 className="text-white lg:text-6xl xs:text-4xl font-extrabold p-8 drop-shadow-lg">
+      <div className="grid grid-cols-2 grid-rows-1 w-[90%] h-[95%] space-x-5">
+        <div className="bg-quaternary/40 backdrop-blur-md flex flex-col items-center rounded-2xl">
+          <h2 className="text-white text-6xl font-extrabold p-10 drop-shadow-lg">
             Webcam
           </h2>
           <Webcam
             audio={false}
             ref={webcamRef}
-            style={{ borderRadius: "2rem", padding: "1rem" }}
+            style={{ borderRadius: "20px" }}
             mirrored={true}
           />
           <button
             onClick={handleToggleLive}
-            className="m-5 text-sm font-semibold text-white bg-tertiary px-6 py-3 hover:bg-secondary rounded-xl "
+            className="mt-6 text-sm/6 font-semibold text-white bg-tertiary/50 px-6 py-3 hover:bg-tertiary/70 rounded-xl transition-all duration-300"
           >
             {isLive
               ? "Stop Transcription"
@@ -105,19 +106,19 @@ export const Demo = () => {
           </button>
         </div>
 
-        <div className="flex flex-col items-center space-y-10 bg-quaternary/40 backdrop-blur-md rounded-2xl pb-10">
-          <h2 className="text-white lg:text-6xl xs:text-4xl font-extrabold p-10 drop-shadow-lg text-wrap">
-            Options/ Output
+        <div className="flex flex-col items-center space-y-10 bg-quaternary/40 backdrop-blur-md rounded-2xl">
+          <h2 className="text-white text-6xl font-extrabold p-10 drop-shadow-lg">
+            Options/Output
           </h2>
           <div className="flex flex-col items-center bg-tertiary/50 p-10 rounded-xl w-[90%]">
             <h2 className="font-semibold text-white drop-shadow-md">
               English Transcription
             </h2>
             {/* {processingResult && (
-              <p className="text-white mt-4 text-wrap overflow-auto">
-                {processingResult}
-              </p>
-            )} */}
+             <p className="text-white mt-4 text-wrap overflow-auto">
+               {processingResult}
+             </p>
+           )} */}
           </div>
           <div className="flex flex-col items-center bg-tertiary/50 p-10 rounded-xl w-[90%]">
             <h2 className="font-semibold text-white drop-shadow-md">
