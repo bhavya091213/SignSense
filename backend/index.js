@@ -1,31 +1,57 @@
 const express = require("express");
 const cors = require("cors");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+const { spawn } = require("child_process");
+const path = require("path");
 
-//kmulter
-const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
-
-// app
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"]
+  }
+});
 
-// Enable CORS
 app.use(cors());
-
-// dotenv
 require("dotenv").config();
 const port = process.env.SERVER || 3000;
 
-// spawn async (child_process)
-const { spawn } = require("child_process").spawn;
+let pythonProcess = null;
 
-app.get("/", (req, res) => {
-  console.log("faggot");
-  res.send("hello wrld");
-});
-app.post("/uploadFrame", upload.single("frame"), (req, res) => {
-  res.send(port);
+io.on("connection", (socket) => {
+  console.log("Client connected");
+  
+  // Start Python process with correct path to temp.py
+  pythonProcess = spawn("python3", [
+    path.join(__dirname, "../ASL/temp.py")
+  ]);
+  
+  pythonProcess.stdout.on("data", (data) => {
+    console.log("Python output:", data.toString());
+    socket.emit("processing-result", data.toString());
+  });
+
+  pythonProcess.stderr.on("data", (data) => {
+    console.error("Python error:", data.toString());
+  });
+
+  socket.on("video-frame", (frameData) => {
+    if (pythonProcess && pythonProcess.stdin.writable) {
+      pythonProcess.stdin.write(JSON.stringify({ frame: frameData }) + "\n");
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+    if (pythonProcess) {
+      pythonProcess.kill();
+      pythonProcess = null;
+    }
+  });
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+httpServer.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
