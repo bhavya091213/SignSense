@@ -128,7 +128,7 @@ app.post("/grammar", async (req, res) => {
         {
           role: "system",
           content:
-            "You are an advanced grammar-checking assistant. Your task is to analyze the given text and provide a grammatically correct version while preserving its meaning. Respond with ONLY the corrected text.",
+            "You are an advanced grammar-checking assistant. Your task is to analyze the given text and provide a grammatically correct version while preserving its meaning. Your response should give me back a statement that matches the original statement except with fixed grammar, punctuation, and spelling. The original connotation f the statement should remian.",
         },
       ],
       messages: [{ role: "user", content: question }],
