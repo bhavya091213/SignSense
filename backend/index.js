@@ -5,7 +5,6 @@ const { Server } = require("socket.io");
 const { spawn } = require("child_process");
 const path = require("path");
 const { OpenAI } = require("openai");
-const { Client } = require("@gradio/client");
 
 const app = express();
 const httpServer = createServer(app);
@@ -67,6 +66,7 @@ app.post("/generate_audio", async (req, res) => {
     );
     const exampleAudio2 = await response_1.blob();
 
+    const { Client } = await import("@gradio/client");
     const client = await Client.connect("http://localhost:7860/");
     const result = await client.predict("/generate_audio", {
       model_choice: "Zyphra/Zonos-v0.1-transformer",
@@ -135,10 +135,6 @@ app.post("/grammar", async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 43cea94cca3159dc2839899a4e10a3e602b92f92
 httpServer.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
