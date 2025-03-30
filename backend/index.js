@@ -65,7 +65,14 @@ app.post("/generate_audio", async (req, res) => {
     );
 
     const { Client } = await import("@gradio/client");
-    const client = await Client.connect("http://localhost:7860/");
+    // Fix the protocol typo (htts -> https) and add options with the ngrok header
+    const client = await Client.connect("https://0349-128-6-147-94.ngrok-free.app", {
+      hf_token: null,
+      headers: {
+        "ngrok-skip-browser-warning": "true"
+      }
+    });
+    
     const result = await client.predict("/generate_audio", {
       model_choice: "Zyphra/Zonos-v0.1-transformer",
       text: text,
@@ -117,20 +124,21 @@ app.post("/grammar", async (req, res) => {
   try {
     const ollama = new Ollama({ host: "http://127.0.0.1:11434" });
     const response = await ollama.chat({
-      model: "airat/karen-the-editor-v2-strict:latest",
+      model: "gemma3:12b",
       messages: [
         {
           role: "user",
-          content:
-            "You are an advanced grammar-checking assistant. Your task is to analyze the given text and provide a grammatically correct version while preserving its meaning. Respond with ONLY the corrected text. Do NOT add any more words just fix spelling and punctuation " +
-            question,
+          content: `Fix the grammar and spelling in the following text. Return ONLY the corrected text without any explanations, introductions, or additional comments: "${question}"`
         },
       ],
+      options: {
+        temperature: 0.4
+      }
     });
 
     console.log("Ollama response:", JSON.stringify(response, null, 2));
 
-    // Extract the answer from the response
+    // Extract the answer from the response/
     const answer = response.message.content;
 
     res.json({ answer });
