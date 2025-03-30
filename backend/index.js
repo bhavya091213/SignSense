@@ -124,6 +124,13 @@ app.post("/grammar", async (req, res) => {
 
     const completion = await openai.chat.completions.create({
       model: "airat/karen-the-editor-v2-creative",
+      messages: [
+        {
+          role: "system",
+          content:
+            "Correct the grammar of the following sentence. You are free to take some liberties to make it flow better.",
+        },
+      ],
       messages: [{ role: "user", content: question }],
     });
 
