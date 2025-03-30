@@ -126,14 +126,13 @@ app.post("/grammar", async (req, res) => {
       model: "airat/karen-the-editor-v2-creative",
       messages: [
         {
-          role: "system",
+          role: "user",
           content:
-            "You are an advanced grammar-checking assistant. Your task is to analyze the given text and provide a grammatically correct version while preserving its meaning. Respond with ONLY the corrected text.",
+            "You are an advanced grammar-checking assistant. Your task is to analyze the given text and provide a grammatically correct version while preserving its meaning. Respond with ONLY the corrected text." +
+            question,
         },
       ],
-      messages: [{ role: "user", content: question }],
     });
-
     const answer = completion.choices[0].message.content;
     res.json({ answer });
   } catch (error) {
