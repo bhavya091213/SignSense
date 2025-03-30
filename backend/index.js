@@ -4,7 +4,7 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const { spawn } = require("child_process");
 const path = require("path");
-const { OpenAI } = require("openai");
+const { Ollama } = require("ollama");
 const fs = require("fs").promises;
 
 const app = express();
@@ -115,23 +115,24 @@ app.post("/grammar", async (req, res) => {
   const { question } = req.body;
 
   try {
-    const openai = new OpenAI({
-      baseURL: "http://localhost:11434/v1",
-      apiKey: "ollama", // required but unused
-    });
-
-    const completion = await openai.chat.completions.create({
-      model: "airat/karen-the-editor-v2-creative",
+    const ollama = new Ollama({ host: "http://127.0.0.1:11434" });
+    const response = await ollama.chat({
+      model: "airat/karen-the-editor-v2-strict:latest",
       messages: [
         {
           role: "user",
           content:
-            "You are an advanced grammar-checking assistant. Your task is to analyze the given text and provide a grammatically correct version while preserving its meaning. Respond with ONLY the corrected text." +
+            "You are an advanced grammar-checking assistant. Your task is to analyze the given text and provide a grammatically correct version while preserving its meaning. Respond with ONLY the corrected text. " +
             question,
         },
       ],
     });
-    const answer = completion.choices[0].message.content;
+
+    console.log("Ollama response:", JSON.stringify(response, null, 2));
+
+    // Extract the answer from the response
+    const answer = response.message.content;
+
     res.json({ answer });
   } catch (error) {
     console.error("Error getting response from Ollama:", error);
