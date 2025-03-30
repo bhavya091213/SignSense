@@ -2,37 +2,43 @@ import { Link } from "react-router";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
+const people = [
+  {
+    name: "Leslie Alexander",
+    role: "Co-Founder / CEO",
+    imageUrl:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+  },
+  // More people...
+];
 export const Home = () => {
-  const blob1Ref = useRef(null);
-  const blob2Ref = useRef(null);
+  const blobRef = useRef(null);
   const handleGitRepo = () => {
     window.open("https://github.com/bhavya091213/SignSense");
   };
-  const blob3Ref = useRef(null);
 
   useEffect(() => {
-    const timeline = gsap.timeline({
+    const blob = blobRef.current;
+
+    gsap.to(blob, {
+      duration: 20,
+      rotate: 360,
+      scale: 1.2,
+      x: 100,
+      y: 50,
       repeat: -1,
       yoyo: true,
+      ease: "power1.inOut",
     });
 
-    [blob1Ref, blob2Ref, blob3Ref].forEach((blobRef, index) => {
-      timeline.to(
-        blobRef.current,
-        {
-          duration: 8 + index * 2,
-          scale: "random(0.8, 1.5)",
-          x: "random(-150, 150)",
-          y: "random(-100, 100)",
-          rotation: "random(-45, 45)",
-          ease: "sine.inOut",
-          stagger: {
-            amount: 4,
-            from: "random",
-          },
-        },
-        "<"
-      );
+    // Random movement animation
+    gsap.to(blob, {
+      duration: 15,
+      x: "random(-100, 100)",
+      y: "random(-50, 50)",
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
     });
   }, []);
 
@@ -44,25 +50,12 @@ export const Home = () => {
           className="absolute inset-x-0 -top-3 -z-10 transform-gpu overflow-hidden px-36 blur-3xl"
         >
           <div
-            ref={blob1Ref}
+            ref={blobRef}
             style={{
-              clipPath: "circle(30% at 40% 40%)",
+              clipPath:
+                "clip-path: polygon(74% 44.1%, 0% 40.75%, 46.58% 97.09%, 62.5% 28.68%, 85.4% 0.1%, 19.7% 11.46%, 100% 23.27%, 100% 70.65%, 53.55% 100%, 0% 15.25%, 45.1% 34.5%, 34.86% 100%, 0% 64.9%, 17.8% 100%, 23.7% 61.6%, 100% 100%, 76% 97.7%, 96.76% 84.32%)",
             }}
-            className="absolute mx-auto w-[40rem] h-[40rem] bg-gradient-to-br from-secondary to-tertiary opacity-20"
-          />
-          <div
-            ref={blob2Ref}
-            style={{
-              clipPath: "circle(35% at 60% 60%)",
-            }}
-            className="absolute mx-auto w-[45rem] h-[45rem] bg-gradient-to-tr from-tertiary to-quaternary opacity-20 left-20"
-          />
-          <div
-            ref={blob3Ref}
-            style={{
-              clipPath: "circle(25% at 50% 50%)",
-            }}
-            className="absolute mx-auto w-[35rem] h-[35rem] bg-gradient-to-bl from-quaternary to-secondary opacity-20 right-20"
+            className="mx-auto aspect-1155/678 w-[72.1875rem] bg-linear-to-tr from-secondary to-tertiary opacity-20"
           />
         </div>
         {/* Hero Page */}
@@ -100,6 +93,45 @@ export const Home = () => {
           </div>
         </div>
         {/* Rest of the homepage */}
+
+        <div className=" w-screen bg-gradient-to-r from-darkest to-quinary py-24 sm:py-32 lg:px-8 z-0 h-screen">
+          <div className="mx-auto grid max-w-7xl gap-20 px-6 lg:px-8 xl:grid-cols-3">
+            <div className="max-w-xl">
+              <h2 className="text-3xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-4xl">
+                Meet our leadership
+              </h2>
+              <p className="mt-6 text-lg/8 text-gray-600">
+                We’re a dynamic group of individuals who are passionate about
+                what we do and dedicated to delivering the best results for our
+                clients.
+              </p>
+            </div>
+            <ul
+              role="list"
+              className="grid gap-x-8 gap-y-12 sm:grid-cols-2 sm:gap-y-16 xl:col-span-2"
+            >
+              {people.map((person) => (
+                <li key={person.name}>
+                  <div className="flex items-center gap-x-6">
+                    <img
+                      alt=""
+                      src={person.imageUrl}
+                      className="size-16 rounded-full"
+                    />
+                    <div>
+                      <h3 className="text-base/7 font-semibold tracking-tight text-gray-900">
+                        {person.name}
+                      </h3>
+                      <p className="text-sm/6 font-semibold text-indigo-600">
+                        {person.role}
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
     </>
   );
