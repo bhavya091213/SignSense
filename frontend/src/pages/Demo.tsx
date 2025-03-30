@@ -63,7 +63,7 @@ export const Demo = () => {
     let intervalId: number | null = null;
 
     if (isLive) {
-      intervalId = window.setInterval(captureFrameAndUpload, 33) as number;
+      intervalId = window.setInterval(captureFrameAndUpload, 16.667) as number;
     }
 
     return () => {
