@@ -5,6 +5,7 @@ const { Server } = require("socket.io");
 const { spawn } = require("child_process");
 const path = require("path");
 const { OpenAI } = require("openai");
+const fs = require("fs").promises;
 
 const app = express();
 const httpServer = createServer(app);
@@ -56,15 +57,12 @@ app.post("/generate_audio", async (req, res) => {
   const { text, language_code } = req.body;
 
   try {
-    const response_0 = await fetch(
-      "https://github.com/gradio-app/gradio/raw/main/test/test_files/audio_sample.wav",
+    const exampleAudio = await fs.readFile(
+      path.join(__dirname, "audio/exampleaudio.mp3"),
     );
-    const exampleAudio = await response_0.blob();
-
-    const response_1 = await fetch(
-      "https://github.com/gradio-app/gradio/raw/main/test/test_files/audio_sample.wav",
+    const exampleAudio2 = await fs.readFile(
+      path.join(__dirname, "audio/silence_100ms.wav"),
     );
-    const exampleAudio2 = await response_1.blob();
 
     const { Client } = await import("@gradio/client");
     const client = await Client.connect("http://localhost:7860/");
@@ -136,8 +134,8 @@ app.post("/grammar", async (req, res) => {
     const answer = completion.choices[0].message.content;
     res.json({ answer });
   } catch (error) {
-    console.error("Error getting response from OpenAI:", error);
-    res.status(500).json({ error: "Failed to get response from OpenAI" });
+    console.error("Error getting response from Ollama:", error);
+    res.status(500).json({ error: "Failed to get response from Ollama" });
   }
 });
 
