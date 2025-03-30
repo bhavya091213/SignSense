@@ -4,6 +4,8 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const { spawn } = require("child_process");
 const path = require("path");
+const { OpenAI } = require("openai");
+const { Client } = require("@gradio/client");
 
 const app = express();
 const httpServer = createServer(app);
@@ -15,6 +17,7 @@ const io = new Server(httpServer, {
 });
 
 app.use(cors());
+app.use(express.json()); // Add this line to parse JSON request bodies
 require("dotenv").config();
 const port = process.env.SERVER || 3000;
 
@@ -64,7 +67,7 @@ app.post("/generate_audio", async (req, res) => {
     );
     const exampleAudio2 = await response_1.blob();
 
-    const client = await Client.connect("http://127.0.0.1:7860/");
+    const client = await Client.connect("http://localhost:7860/");
     const result = await client.predict("/generate_audio", {
       model_choice: "Zyphra/Zonos-v0.1-transformer",
       text: text,
@@ -130,10 +133,6 @@ app.post("/grammar", async (req, res) => {
     console.error("Error getting response from OpenAI:", error);
     res.status(500).json({ error: "Failed to get response from OpenAI" });
   }
-});
-
-httpServer.listen(port, () => {
-  console.log(`Server running on port ${port}`);
 });
 
 httpServer.listen(port, () => {
