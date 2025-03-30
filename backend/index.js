@@ -27,7 +27,7 @@ io.on("connection", (socket) => {
   console.log("Client connected");
 
   // Start Python process with correct path to temp.py
-  pythonProcess = spawn("python3", [path.join(__dirname, "../ASL/temp.py")]);
+  pythonProcess = spawn("python", [path.join(__dirname, "../ASL/temp.py")]);
 
   pythonProcess.stdout.on("data", (data) => {
     console.log("Python output:", data.toString());
@@ -135,6 +135,10 @@ app.post("/grammar", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 43cea94cca3159dc2839899a4e10a3e602b92f92
 httpServer.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
