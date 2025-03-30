@@ -128,7 +128,7 @@ app.post("/grammar", async (req, res) => {
         {
           role: "system",
           content:
-            "Correct the grammar of the following sentence. You are free to take some liberties to make it flow better.",
+            "You are an advanced grammar-checking assistant. Your task is to analyze the given text and provide a grammatically correct version while preserving its meaning. Respond with ONLY the corrected text.",
         },
       ],
       messages: [{ role: "user", content: question }],
